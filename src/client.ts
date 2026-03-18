@@ -1,7 +1,7 @@
 import { getApiKey, getApiUrl } from './config.js';
 
 export interface ApiError {
-  error: { type: string; message: string; details?: string[] };
+  error: { type: string; message: string; details?: string[]; required?: number; available?: number };
 }
 
 export interface PaginationMeta {
@@ -78,10 +78,12 @@ class BalzacClient {
       const msg = err?.error?.message || `HTTP ${res.status}`;
       const type = err?.error?.type || 'unknown';
       const details = err?.error?.details;
-      const error = new Error(msg) as Error & { type: string; status: number; details?: string[] };
+      const error = new Error(msg) as Error & { type: string; status: number; details?: string[]; required?: number; available?: number };
       error.type = type;
       error.status = res.status;
       if (details) error.details = details;
+      if (err?.error?.required !== undefined) error.required = err.error.required;
+      if (err?.error?.available !== undefined) error.available = err.error.available;
       throw error;
     }
 

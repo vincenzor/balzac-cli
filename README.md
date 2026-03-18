@@ -123,7 +123,7 @@ balzac suggestions get <suggestion-id>
 # Generate new suggestions
 balzac suggestions generate
 
-# Accept a suggestion (starts article writing — costs 3 credits)
+# Accept a suggestion (starts article writing — costs 5 credits)
 balzac suggestions accept <suggestion-id>
 
 # Reject a suggestion
@@ -138,7 +138,7 @@ Direct write instructions. Creating a briefing immediately starts the article wr
 # List briefings
 balzac briefings list
 
-# Create a briefing (starts writing — costs 3 credits)
+# Create a briefing (starts writing — costs 5 credits)
 balzac briefings create --topic "How to use AI for content marketing in 2026"
 balzac briefings create --topic "SEO tips" --type listicle --length long
 
@@ -402,6 +402,7 @@ The CLI provides clear error messages with colored output:
 | `No API key configured` | Run `balzac auth login` or set `BALZAC_API_KEY` |
 | `No workspace specified` | Use `-w <id>` or `balzac config set workspace <id>` |
 | `unauthorized` | API key is invalid or expired |
+| `insufficient_credits` | Not enough credits — check your billing in the Balzac app |
 | `not_found` | Resource doesn't exist — check the ID |
 | `conflict` | Action not allowed (e.g. accepting already accepted suggestion) |
 | `validation_failed` | Invalid parameters — check the `details` in the error |
@@ -521,10 +522,10 @@ balzac keywords generate-long-tail <id>                     # Generate variants
 # Suggestions
 balzac suggestions list --status proposed                   # Pending suggestions
 balzac suggestions generate                                 # Generate new
-balzac suggestions accept <id>                              # Accept (3 credits)
+balzac suggestions accept <id>                              # Accept (5 credits)
 
 # Briefings
-balzac briefings create --topic "My topic"                  # Write article (3 credits)
+balzac briefings create --topic "My topic"                  # Write article (5 credits)
 
 # Articles
 balzac articles list --status done                          # Completed articles

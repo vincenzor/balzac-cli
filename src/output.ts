@@ -36,13 +36,15 @@ export function printWarning(msg: string) {
 
 export function printError(err: unknown) {
   if (err instanceof Error) {
-    const apiErr = err as Error & { type?: string; status?: number; details?: string[] };
+    const apiErr = err as Error & { type?: string; status?: number; details?: string[]; required?: number; available?: number };
     if (jsonMode) {
       printJson({
         error: {
           type: apiErr.type || 'error',
           message: apiErr.message,
           details: apiErr.details,
+          required: apiErr.required,
+          available: apiErr.available,
         },
       });
       return;
@@ -53,6 +55,9 @@ export function printError(err: unknown) {
         (apiErr.type ? chalk.dim(`[${apiErr.type}] `) : '') +
         apiErr.message
     );
+    if (apiErr.type === 'insufficient_credits' && apiErr.required !== undefined) {
+      console.error('  ' + chalk.yellow(`Credits required: ${apiErr.required}, available: ${apiErr.available ?? 0}`));
+    }
     if (apiErr.details?.length) {
       for (const d of apiErr.details) {
         console.error('  ' + chalk.dim('•') + ' ' + d);
