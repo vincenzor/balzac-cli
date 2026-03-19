@@ -98,8 +98,9 @@ export function registerBriefingsCommands(program: Command) {
           `/workspaces/${ws}/briefings`, { briefing: body }
         );
         printSuccess('Briefing created — article writing started.');
-        const briefing = (res.data.briefing as Record<string, unknown>) || res.data;
-        printRecord(briefing, FIELDS);
+        if (res.status !== 204 && res.data.briefing) {
+          printRecord(res.data.briefing as Record<string, unknown>, FIELDS);
+        }
       } catch (err) {
         printError(err);
         process.exit(1);

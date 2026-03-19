@@ -33,18 +33,19 @@ export function registerWriteCommand(program: Command) {
         if (opts.length) body.length = opts.length;
         if (opts.language) body.language = opts.language;
 
-        const res = await client.post<{ briefing: Record<string, unknown> }>(
+        const res = await client.post<Record<string, unknown>>(
           `/workspaces/${ws}/briefings`, { briefing: body }
         );
-        const briefing = res.data.briefing;
         printSuccess('Briefing created — article writing started.');
 
         if (!opts.wait) {
-          printRecord(briefing, [
-            { key: 'id', label: 'Briefing ID' },
-            { key: 'topic', label: 'Topic' },
-            { key: 'status', label: 'Status' },
-          ]);
+          if (res.status !== 204 && res.data.briefing) {
+            printRecord(res.data.briefing as Record<string, unknown>, [
+              { key: 'id', label: 'Briefing ID' },
+              { key: 'topic', label: 'Topic' },
+              { key: 'status', label: 'Status' },
+            ]);
+          }
           return;
         }
 

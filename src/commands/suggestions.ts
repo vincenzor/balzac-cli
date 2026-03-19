@@ -89,7 +89,9 @@ export function registerSuggestionsCommands(program: Command) {
         const ws = resolveWorkspace(opts.workspace);
         const res = await client.post<{ suggestion: Record<string, unknown> }>(`/workspaces/${ws}/suggestions/${id}/accept`);
         printSuccess('Suggestion accepted — article writing started.');
-        printRecord(res.data.suggestion, FIELDS);
+        if (res.status !== 204 && res.data.suggestion) {
+          printRecord(res.data.suggestion, FIELDS);
+        }
       } catch (err) {
         printError(err);
         process.exit(1);
@@ -105,7 +107,9 @@ export function registerSuggestionsCommands(program: Command) {
         const ws = resolveWorkspace(opts.workspace);
         const res = await client.post<{ suggestion: Record<string, unknown> }>(`/workspaces/${ws}/suggestions/${id}/reject`);
         printSuccess('Suggestion rejected.');
-        printRecord(res.data.suggestion, FIELDS);
+        if (res.status !== 204 && res.data.suggestion) {
+          printRecord(res.data.suggestion, FIELDS);
+        }
       } catch (err) {
         printError(err);
         process.exit(1);
