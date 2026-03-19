@@ -21,7 +21,7 @@ balzac --version
 Install the Balzac skill for your AI agent (Cursor, Claude Code, OpenClaw, etc.):
 
 ```bash
-npx skills add vincenzor/balzac-cli
+npx skills add hirebalzac/cli
 ```
 
 This installs the [SKILL.md](SKILL.md) which gives your agent full knowledge of the CLI commands, patterns, and workflows.
@@ -625,7 +625,7 @@ balzac -q articles list                                     # IDs only
 
 ## See Also
 
-- [Balzac MCP Server](https://github.com/vincenzor/balzac-mcp) -- Use Balzac natively from AI assistants (Cursor, Claude Desktop, VS Code)
+- [Balzac MCP Server](https://github.com/hirebalzac/mcp) -- Use Balzac natively from AI assistants (Cursor, Claude Desktop, VS Code)
 - [API Documentation](https://developer.hirebalzac.ai) -- Full REST API reference
 
 ---
@@ -640,6 +640,6 @@ MIT
 
 - **Website:** [hirebalzac.ai](https://hirebalzac.ai)
 - **API Docs:** [developer.hirebalzac.ai](https://developer.hirebalzac.ai)
-- **GitHub:** [vincenzor/balzac-cli](https://github.com/vincenzor/balzac-cli)
+- **GitHub:** [hirebalzac/cli](https://github.com/hirebalzac/cli)
 - **npm:** [balzac-cli](https://www.npmjs.com/package/balzac-cli)
-- **Issues:** [Report bugs](https://github.com/vincenzor/balzac-cli/issues)
+- **Issues:** [Report bugs](https://github.com/hirebalzac/cli/issues)

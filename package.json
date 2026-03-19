@@ -26,10 +26,10 @@
   "homepage": "https://developer.hirebalzac.ai",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vincenzor/balzac-cli.git"
+    "url": "git+https://github.com/hirebalzac/cli.git"
   },
   "bugs": {
-    "url": "https://github.com/vincenzor/balzac-cli/issues"
+    "url": "https://github.com/hirebalzac/cli/issues"
   },
   "engines": {
     "node": ">=18"

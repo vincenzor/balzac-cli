@@ -12,7 +12,7 @@ npm install -g balzac-cli
 ```
 
 npm release: https://www.npmjs.com/package/balzac-cli
-balzac cli github: https://github.com/vincenzor/balzac-cli
+balzac cli github: https://github.com/hirebalzac/cli
 api docs: https://developer.hirebalzac.ai
 official website: https://hirebalzac.ai
 
