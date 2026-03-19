@@ -7,6 +7,19 @@ import {
 } from '../config.js';
 import { printSuccess, printError, printInfo, isJsonMode, printJson } from '../output.js';
 
+function warnEnvOverrides() {
+  const overrides: string[] = [];
+  if (process.env.BALZAC_API_URL) overrides.push(`BALZAC_API_URL=${process.env.BALZAC_API_URL}`);
+  if (process.env.BALZAC_API_KEY) overrides.push(`BALZAC_API_KEY=(set)`);
+  if (overrides.length > 0) {
+    printInfo(
+      'Environment variable override active: ' + overrides.join(', ') +
+      '\n  Environment variables take precedence over config file values.' +
+      '\n  Run ' + chalk.bold('unset ' + overrides.map(o => o.split('=')[0]).join(' ')) + ' to use config file values.'
+    );
+  }
+}
+
 export function registerConfigCommands(program: Command) {
   const cfg = program.command('config').description('Manage CLI configuration');
 
@@ -24,10 +37,19 @@ export function registerConfigCommands(program: Command) {
           case 'api-key':
             setApiKey(value);
             printSuccess('API key saved.');
+            if (process.env.BALZAC_API_KEY) {
+              printInfo('Warning: BALZAC_API_KEY environment variable is set and will take precedence over the saved value.');
+            }
             break;
           case 'api-url':
             setApiUrl(value);
             printSuccess(`API URL set to ${value}`);
+            if (process.env.BALZAC_API_URL) {
+              printInfo(
+                'Warning: BALZAC_API_URL environment variable is set to ' + process.env.BALZAC_API_URL +
+                '\n  The environment variable takes precedence. Run ' + chalk.bold('unset BALZAC_API_URL') + ' to use the saved value.'
+              );
+            }
             break;
           default:
             printError(new Error(`Unknown config key: ${key}. Valid keys: workspace, api-key, api-url`));
@@ -52,11 +74,15 @@ export function registerConfigCommands(program: Command) {
             config_path: getConfigPath(),
           };
           if (isJsonMode()) {
-            printJson(all);
+            const envOverrides: Record<string, string> = {};
+            if (process.env.BALZAC_API_URL) envOverrides.api_url_env = process.env.BALZAC_API_URL;
+            if (process.env.BALZAC_API_KEY) envOverrides.api_key_env = '(set via env)';
+            printJson({ ...all, ...envOverrides });
           } else {
             for (const [k, v] of Object.entries(all)) {
               console.log(chalk.bold(k + ':') + ' ' + v);
             }
+            warnEnvOverrides();
           }
           return;
         }
