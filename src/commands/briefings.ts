@@ -94,11 +94,12 @@ export function registerBriefingsCommands(program: Command) {
         if (opts.secondaryKeyword) body.secondary_keyword_id = opts.secondaryKeyword;
         if (opts.tone) body.tone_of_voice_id = opts.tone;
 
-        const res = await client.post<{ briefing: Record<string, unknown> }>(
+        const res = await client.post<Record<string, unknown>>(
           `/workspaces/${ws}/briefings`, { briefing: body }
         );
         printSuccess('Briefing created — article writing started.');
-        printRecord(res.data.briefing, FIELDS);
+        const briefing = (res.data.briefing as Record<string, unknown>) || res.data;
+        printRecord(briefing, FIELDS);
       } catch (err) {
         printError(err);
         process.exit(1);

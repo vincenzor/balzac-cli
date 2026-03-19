@@ -127,7 +127,8 @@ export function printDetail(label: string, value: unknown) {
   console.log(chalk.bold(label + ':') + ' ' + display);
 }
 
-export function printRecord(data: Record<string, unknown>, fields: { key: string; label: string }[]) {
+export function printRecord(data: Record<string, unknown> | undefined | null, fields: { key: string; label: string }[]) {
+  if (!data) return;
   if (jsonMode) {
     printJson(data);
     return;
