@@ -13,6 +13,16 @@ npm install -g balzac-cli
 balzac --version
 ```
 
+### For AI Agents
+
+Install the Balzac skill for your AI agent (Cursor, Claude Code, Codex, etc.):
+
+```bash
+npx skills add vincenzor/balzac-cli
+```
+
+This installs the [SKILL.md](SKILL.md) which gives your agent full knowledge of the CLI commands, patterns, and workflows.
+
 ---
 
 ## Setup
