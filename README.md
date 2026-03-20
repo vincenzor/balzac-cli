@@ -99,7 +99,7 @@ balzac workspaces delete <workspace-id>
 ```bash
 # List keywords
 balzac keywords list -w <workspace-id>
-balzac keywords list --level 1 --status enabled
+balzac keywords list --status enabled
 
 # Create a keyword
 balzac keywords create --name "content marketing" -w <workspace-id>
@@ -110,9 +110,6 @@ balzac keywords get <keyword-id>
 # Enable / disable
 balzac keywords enable <keyword-id>
 balzac keywords disable <keyword-id>
-
-# Generate long-tail variations
-balzac keywords generate-long-tail <keyword-id>
 
 # Delete keyword
 balzac keywords delete <keyword-id>
@@ -130,7 +127,7 @@ balzac suggestions list --status proposed
 # Get suggestion details
 balzac suggestions get <suggestion-id>
 
-# Generate new suggestions
+# Generate new suggestions (costs 1 credit)
 balzac suggestions generate
 
 # Accept a suggestion (starts article writing — costs 5 credits)
@@ -452,7 +449,8 @@ balzac write "best AI writing tools 2026" --type listicle --length long --wait
 | Action | Credits |
 |--------|---------|
 | Writing an article (accepting suggestion or creating briefing) | 5 |
-| Rewriting an article | 5 |
+| Generating 10 new suggestions | 1 |
+| Rewriting an article | 3 |
 | Regenerating a picture | 1 |
 
 ---
@@ -493,7 +491,6 @@ The CLI maps to these Balzac API endpoints:
 | `keywords create` | POST | `/workspaces/{id}/keywords` |
 | `keywords enable` | POST | `/workspaces/{id}/keywords/{id}/enable` |
 | `keywords disable` | POST | `/workspaces/{id}/keywords/{id}/disable` |
-| `keywords generate-long-tail` | POST | `/workspaces/{id}/keywords/{id}/generate_long_tail` |
 | `suggestions list` | GET | `/workspaces/{id}/suggestions` |
 | `suggestions generate` | POST | `/workspaces/{id}/suggestions/generate` |
 | `suggestions accept` | POST | `/workspaces/{id}/suggestions/{id}/accept` |
@@ -581,11 +578,10 @@ balzac workspaces get <id>                                  # Get details
 balzac keywords list                                        # List keywords
 balzac keywords create --name "keyword"                     # Add keyword
 balzac keywords enable <id>                                 # Enable
-balzac keywords generate-long-tail <id>                     # Generate variants
 
 # Suggestions
 balzac suggestions list --status proposed                   # Pending suggestions
-balzac suggestions generate                                 # Generate new
+balzac suggestions generate                                 # Generate new (1 credit)
 balzac suggestions accept <id>                              # Accept (5 credits)
 
 # Briefings

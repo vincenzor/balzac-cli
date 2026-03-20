@@ -77,8 +77,6 @@ export function registerBriefingsCommands(program: Command) {
     .option('--language <code>', 'Language override')
     .option('--focus-keywords <kw>', 'Focus keywords')
     .option('--instructions <text>', 'Writing instructions')
-    .option('--keyword <id>', 'Primary keyword ID')
-    .option('--secondary-keyword <id>', 'Secondary keyword ID')
     .option('--tone <id>', 'Tone of voice ID')
     .action(async (opts) => {
       try {
@@ -90,8 +88,6 @@ export function registerBriefingsCommands(program: Command) {
         if (opts.language) body.language = opts.language;
         if (opts.focusKeywords) body.focus_keywords = opts.focusKeywords;
         if (opts.instructions) body.briefing = opts.instructions;
-        if (opts.keyword) body.primary_keyword_id = opts.keyword;
-        if (opts.secondaryKeyword) body.secondary_keyword_id = opts.secondaryKeyword;
         if (opts.tone) body.tone_of_voice_id = opts.tone;
 
         const res = await client.post<Record<string, unknown>>(

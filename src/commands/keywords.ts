@@ -3,21 +3,18 @@ import { client } from '../client.js';
 import { resolveWorkspace } from '../config.js';
 import {
   printTable, printRecord, printPagination, printSuccess,
-  printError, formatStatus, truncate, printInfo,
+  printError, formatStatus, truncate,
 } from '../output.js';
 
 const FIELDS = [
   { key: 'id', label: 'ID' },
   { key: 'name', label: 'Name' },
-  { key: 'level', label: 'Level' },
   { key: 'status', label: 'Status' },
   { key: 'search_intent', label: 'Search Intent' },
   { key: 'search_volume', label: 'Search Volume' },
   { key: 'competition', label: 'Competition' },
   { key: 'competition_index', label: 'Competition Index' },
   { key: 'cpc', label: 'CPC' },
-  { key: 'parent_id', label: 'Parent ID' },
-  { key: 'long_tail_keywords_count', label: 'Long-tail Count' },
   { key: 'created_by', label: 'Created By' },
   { key: 'created_at', label: 'Created' },
 ];
@@ -28,9 +25,7 @@ export function registerKeywordsCommands(program: Command) {
   kw.command('list')
     .description('List keywords')
     .option('-w, --workspace <id>', 'Workspace ID')
-    .option('--level <n>', 'Filter: 1=primary, 2=long-tail')
     .option('--status <s>', 'Filter: enabled/disabled')
-    .option('--parent <id>', 'Filter long-tail by parent ID')
     .option('--page <n>', 'Page', '1')
     .option('--per-page <n>', 'Per page', '25')
     .action(async (opts) => {
@@ -38,12 +33,11 @@ export function registerKeywordsCommands(program: Command) {
         const ws = resolveWorkspace(opts.workspace);
         const { items, meta } = await client.paginate<Record<string, unknown>>(
           `/workspaces/${ws}/keywords`, 'keywords',
-          { level: opts.level, status: opts.status, parent_id: opts.parent, page: opts.page, per_page: opts.perPage }
+          { status: opts.status, page: opts.page, per_page: opts.perPage }
         );
         printTable(items, [
           { key: 'id', label: 'ID' },
           { key: 'name', label: 'Keyword' },
-          { key: 'level', label: 'Lvl' },
           { key: 'status', label: 'Status', format: (v) => formatStatus(v as string) },
           { key: 'search_volume', label: 'Volume' },
           { key: 'search_intent', label: 'Intent' },
@@ -111,21 +105,6 @@ export function registerKeywordsCommands(program: Command) {
         const ws = resolveWorkspace(opts.workspace);
         await client.post(`/workspaces/${ws}/keywords/${id}/disable`);
         printSuccess(`Keyword ${id} disabled.`);
-      } catch (err) {
-        printError(err);
-        process.exit(1);
-      }
-    });
-
-  kw.command('generate-long-tail')
-    .description('Generate long-tail keyword variations')
-    .argument('<id>', 'Keyword ID')
-    .option('-w, --workspace <id>', 'Workspace ID')
-    .action(async (id, opts) => {
-      try {
-        const ws = resolveWorkspace(opts.workspace);
-        await client.post(`/workspaces/${ws}/keywords/${id}/generate_long_tail`);
-        printInfo('Long-tail keyword generation started. Check back shortly.');
       } catch (err) {
         printError(err);
         process.exit(1);

@@ -32,7 +32,7 @@ The fundamental pattern for using the Balzac CLI:
 
 1. **Authenticate** — Set your API key
 2. **Create workspace** — From a domain, Balzac auto-analyzes the site
-3. **Manage keywords** — Add, enable/disable, generate long-tail variations
+3. **Manage keywords** — Add, enable/disable keywords
 4. **Generate content** — Generate suggestions, accept them, or create briefings directly
 5. **Manage articles** — List, export, rewrite, regenerate pictures, publish
 
@@ -107,8 +107,7 @@ balzac workspaces delete <id>
 ```bash
 # List keywords (use -w to specify workspace, or set default)
 balzac keywords list
-balzac keywords list --level 1 --status enabled
-balzac keywords list --level 2 --parent <keyword-id>
+balzac keywords list --status enabled
 
 # Create keyword
 balzac keywords create --name "content marketing"
@@ -119,9 +118,6 @@ balzac keywords get <keyword-id>
 # Enable / disable
 balzac keywords enable <keyword-id>
 balzac keywords disable <keyword-id>
-
-# Generate long-tail variations (async)
-balzac keywords generate-long-tail <keyword-id>
 
 # Delete keyword
 balzac keywords delete <keyword-id>
@@ -137,7 +133,7 @@ balzac suggestions list --status proposed
 # Get suggestion details
 balzac suggestions get <suggestion-id>
 
-# Generate new suggestions (async)
+# Generate 10 new suggestions (costs 1 credit, async)
 balzac suggestions generate
 
 # Accept suggestion — starts article writing (costs 5 credits)
@@ -494,6 +490,7 @@ balzac keywords list
 |--------|---------|
 | Accept suggestion (starts article writing) | 5 |
 | Create briefing (starts article writing) | 5 |
+| Generate 10 new suggestions | 1 |
 | Rewrite article | 3 |
 | Regenerate picture | 1 |
 
@@ -504,7 +501,6 @@ If credits are insufficient, article status will be `waiting_for_credits`.
 Several operations are asynchronous:
 - **Workspace creation** (`--wait` flag polls until complete)
 - **Suggestion generation** (check `suggestions list` after ~30s)
-- **Long-tail keyword generation** (check keyword's children after ~15s)
 - **Article writing** (poll with `articles get` or use `write --wait`)
 - **Article rewrite** (poll with `articles get`)
 - **Picture regeneration** (poll with `articles get`)
@@ -518,7 +514,7 @@ Several operations are asynchronous:
 2. **No default workspace** — Run `balzac config set workspace <id>` or pass `-w <id>` to every command
 3. **Workspace not ready** — After `workspaces create`, the workspace goes through `new` → `running` → `imported`. Use `--wait` or poll `workspaces get` until status is `imported` or `ready`
 4. **Insufficient credits** — The API returns `402 Payment Required` with `type: insufficient_credits` when you don't have enough credits. Article writing costs 5 credits, rewriting costs 3 credits, picture regeneration costs 1 credit. The error includes `required` and `available` fields
-5. **Async operations need polling** — Suggestion generation, article writing, and long-tail keyword generation are asynchronous. Poll the relevant list/get endpoint
+5. **Async operations need polling** — Suggestion generation and article writing are asynchronous. Poll the relevant list/get endpoint
 6. **JSON output for scripting** — Always use `--json` flag when piping to `jq` or other tools. Default output is human-formatted and not parseable
 7. **Rate limiting** — API allows 100 requests/minute. CLI auto-retries on 429 with exponential backoff. Add `sleep 1` between batch operations
 8. **Suggestion vs briefing** — Suggestions are AI-generated proposals you accept/reject. Briefings are direct write instructions that start immediately
@@ -543,11 +539,10 @@ balzac workspaces get <id>                                  # Details
 balzac keywords list                                        # List
 balzac keywords create --name "keyword"                     # Create
 balzac keywords enable <id>                                 # Enable
-balzac keywords generate-long-tail <id>                     # Long-tail
 
 # Suggestions
 balzac suggestions list --status proposed                   # Pending
-balzac suggestions generate                                 # Generate
+balzac suggestions generate                                 # Generate (1 cr)
 balzac suggestions accept <id>                              # Accept (5 cr)
 
 # Briefings

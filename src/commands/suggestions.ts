@@ -67,13 +67,13 @@ export function registerSuggestionsCommands(program: Command) {
     });
 
   sg.command('generate')
-    .description('Generate new AI suggestions')
+    .description('Generate 10 new AI suggestions (costs 1 credit)')
     .option('-w, --workspace <id>', 'Workspace ID')
     .action(async (opts) => {
       try {
         const ws = resolveWorkspace(opts.workspace);
         await client.post(`/workspaces/${ws}/suggestions/generate`);
-        printInfo('Suggestion generation started. New suggestions will appear shortly.');
+        printInfo('Generating 10 new suggestions. They will appear shortly.');
       } catch (err) {
         printError(err);
         process.exit(1);
