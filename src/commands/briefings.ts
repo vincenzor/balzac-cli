@@ -17,6 +17,7 @@ const FIELDS = [
   { key: 'focus_keywords', label: 'Focus Keywords' },
   { key: 'description', label: 'Description' },
   { key: 'briefing', label: 'Instructions' },
+  { key: 'gsc_derived', label: 'GSC Insight' },
   { key: 'creation_source', label: 'Source' },
   { key: 'accepted_at', label: 'Accepted At' },
   { key: 'created_at', label: 'Created' },

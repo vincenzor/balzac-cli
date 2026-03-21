@@ -111,6 +111,9 @@ balzac keywords get <keyword-id>
 balzac keywords enable <keyword-id>
 balzac keywords disable <keyword-id>
 
+# Generate new keywords with AI (async)
+balzac keywords generate
+
 # Delete keyword
 balzac keywords delete <keyword-id>
 ```
@@ -468,6 +471,7 @@ The CLI provides clear error messages with colored output:
 | `not_found` | Resource doesn't exist — check the ID |
 | `conflict` | Action not allowed (e.g. accepting already accepted suggestion) |
 | `validation_failed` | Invalid parameters — check the `details` in the error |
+| `limit_reached` | Keyword limit reached — upgrade plan or disable existing keywords |
 | `rate_limited` | Too many requests — CLI auto-retries with backoff |
 
 Exit codes:
@@ -491,6 +495,7 @@ The CLI maps to these Balzac API endpoints:
 | `keywords create` | POST | `/workspaces/{id}/keywords` |
 | `keywords enable` | POST | `/workspaces/{id}/keywords/{id}/enable` |
 | `keywords disable` | POST | `/workspaces/{id}/keywords/{id}/disable` |
+| `keywords generate` | POST | `/workspaces/{id}/keywords/generate` |
 | `suggestions list` | GET | `/workspaces/{id}/suggestions` |
 | `suggestions generate` | POST | `/workspaces/{id}/suggestions/generate` |
 | `suggestions accept` | POST | `/workspaces/{id}/suggestions/{id}/accept` |
@@ -578,6 +583,7 @@ balzac workspaces get <id>                                  # Get details
 balzac keywords list                                        # List keywords
 balzac keywords create --name "keyword"                     # Add keyword
 balzac keywords enable <id>                                 # Enable
+balzac keywords generate                                    # AI generate
 
 # Suggestions
 balzac suggestions list --status proposed                   # Pending suggestions

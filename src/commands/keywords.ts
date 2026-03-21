@@ -3,7 +3,7 @@ import { client } from '../client.js';
 import { resolveWorkspace } from '../config.js';
 import {
   printTable, printRecord, printPagination, printSuccess,
-  printError, formatStatus, truncate,
+  printError, printInfo, formatStatus, truncate,
 } from '../output.js';
 
 const FIELDS = [
@@ -14,7 +14,13 @@ const FIELDS = [
   { key: 'search_volume', label: 'Search Volume' },
   { key: 'competition', label: 'Competition' },
   { key: 'competition_index', label: 'Competition Index' },
+  { key: 'keyword_difficulty', label: 'Difficulty' },
   { key: 'cpc', label: 'CPC' },
+  { key: 'gsc_clicks', label: 'GSC Clicks' },
+  { key: 'gsc_impressions', label: 'GSC Impressions' },
+  { key: 'gsc_ctr', label: 'GSC CTR' },
+  { key: 'gsc_position', label: 'GSC Position' },
+  { key: 'gsc_last_synced_at', label: 'GSC Synced At' },
   { key: 'created_by', label: 'Created By' },
   { key: 'created_at', label: 'Created' },
 ];
@@ -120,6 +126,20 @@ export function registerKeywordsCommands(program: Command) {
         const ws = resolveWorkspace(opts.workspace);
         await client.delete(`/workspaces/${ws}/keywords/${id}`);
         printSuccess(`Keyword ${id} deleted.`);
+      } catch (err) {
+        printError(err);
+        process.exit(1);
+      }
+    });
+
+  kw.command('generate')
+    .description('Generate new keywords with AI')
+    .option('-w, --workspace <id>', 'Workspace ID')
+    .action(async (opts) => {
+      try {
+        const ws = resolveWorkspace(opts.workspace);
+        await client.post(`/workspaces/${ws}/keywords/generate`);
+        printInfo('Generating new keywords. They will appear shortly.');
       } catch (err) {
         printError(err);
         process.exit(1);

@@ -119,6 +119,9 @@ balzac keywords get <keyword-id>
 balzac keywords enable <keyword-id>
 balzac keywords disable <keyword-id>
 
+# Generate new keywords with AI (async)
+balzac keywords generate
+
 # Delete keyword
 balzac keywords delete <keyword-id>
 ```
@@ -500,6 +503,7 @@ If credits are insufficient, article status will be `waiting_for_credits`.
 
 Several operations are asynchronous:
 - **Workspace creation** (`--wait` flag polls until complete)
+- **Keyword generation** (check `keywords list` after ~30s)
 - **Suggestion generation** (check `suggestions list` after ~30s)
 - **Article writing** (poll with `articles get` or use `write --wait`)
 - **Article rewrite** (poll with `articles get`)
@@ -539,6 +543,7 @@ balzac workspaces get <id>                                  # Details
 balzac keywords list                                        # List
 balzac keywords create --name "keyword"                     # Create
 balzac keywords enable <id>                                 # Enable
+balzac keywords generate                                    # AI generate
 
 # Suggestions
 balzac suggestions list --status proposed                   # Pending

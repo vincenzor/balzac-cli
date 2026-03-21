@@ -16,6 +16,7 @@ const FIELDS = [
   { key: 'language', label: 'Language' },
   { key: 'focus_keywords', label: 'Focus Keywords' },
   { key: 'description', label: 'Description' },
+  { key: 'gsc_derived', label: 'GSC Insight' },
   { key: 'accepted_at', label: 'Accepted At' },
   { key: 'rejected_at', label: 'Rejected At' },
   { key: 'created_at', label: 'Created' },

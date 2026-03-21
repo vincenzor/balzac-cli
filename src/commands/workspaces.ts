@@ -21,9 +21,22 @@ const FIELDS = [
   { key: 'max_articles_per_period', label: 'Max Articles/Period' },
   { key: 'max_articles_period', label: 'Period' },
   { key: 'auto_accept_suggestions', label: 'Auto-accept Suggestions' },
+  { key: 'keywords_used', label: 'Keywords Used' },
+  { key: 'keywords_max', label: 'Keywords Max' },
+  { key: 'keywords_remaining', label: 'Keywords Remaining' },
   { key: 'setup_completed', label: 'Setup Completed' },
   { key: 'created_at', label: 'Created' },
 ];
+
+function flattenKeywordsLimit(ws: Record<string, unknown>): Record<string, unknown> {
+  const limit = ws.keywords_limit as Record<string, unknown> | undefined;
+  if (limit) {
+    ws.keywords_used = limit.used;
+    ws.keywords_max = limit.max;
+    ws.keywords_remaining = limit.remaining;
+  }
+  return ws;
+}
 
 export function registerWorkspacesCommands(program: Command) {
   const ws = program.command('workspaces').alias('ws').description('Manage workspaces');
@@ -59,7 +72,7 @@ export function registerWorkspacesCommands(program: Command) {
     .action(async (id) => {
       try {
         const res = await client.get<{ workspace: Record<string, unknown> }>(`/workspaces/${id}`);
-        printRecord(res.data.workspace, FIELDS);
+        printRecord(flattenKeywordsLimit(res.data.workspace), FIELDS);
       } catch (err) {
         printError(err);
         process.exit(1);
@@ -111,9 +124,9 @@ export function registerWorkspacesCommands(program: Command) {
             s.text = `Setting up workspace… (${current.current_creation_step || current.status})`;
           }
           s.succeed('Workspace ready');
-          printRecord(current, FIELDS);
+          printRecord(flattenKeywordsLimit(current), FIELDS);
         } else {
-          printRecord(ws, FIELDS);
+          printRecord(flattenKeywordsLimit(ws), FIELDS);
         }
       } catch (err) {
         printError(err);
@@ -148,7 +161,7 @@ export function registerWorkspacesCommands(program: Command) {
         if (opts.period) body.max_articles_period = opts.period;
 
         const res = await client.patch<{ workspace: Record<string, unknown> }>(`/workspaces/${id}`, { workspace: body });
-        printRecord(res.data.workspace, FIELDS);
+        printRecord(flattenKeywordsLimit(res.data.workspace), FIELDS);
       } catch (err) {
         printError(err);
         process.exit(1);
