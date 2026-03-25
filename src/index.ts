@@ -14,6 +14,7 @@ import { registerLinksCommands } from './commands/links.js';
 import { registerSettingsCommands } from './commands/settings.js';
 import { registerTonesCommands } from './commands/tones.js';
 import { registerIntegrationsCommands } from './commands/integrations.js';
+import { registerSearchConsoleCommands } from './commands/search-console.js';
 import { registerConfigCommands } from './commands/config.js';
 
 const program = new Command();
@@ -44,6 +45,7 @@ registerLinksCommands(program);
 registerSettingsCommands(program);
 registerTonesCommands(program);
 registerIntegrationsCommands(program);
+registerSearchConsoleCommands(program);
 registerConfigCommands(program);
 
 program.parse();

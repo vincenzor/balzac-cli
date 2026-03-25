@@ -1,6 +1,6 @@
 ---
 name: balzac
-description: Balzac is an AI content platform CLI — create workspaces, manage SEO keywords, generate article suggestions, write articles, and publish content across integrations. Supports workspaces, keywords, suggestions, briefings, articles, competitors, links, integrations, settings, and tones of voice.
+description: Balzac is an AI content platform CLI — create workspaces, manage SEO keywords, generate article suggestions, write articles, publish content across integrations, and monitor Google Search Console performance. Supports workspaces, keywords, suggestions, briefings, articles, competitors, links, integrations, search console, settings, and tones of voice.
 homepage: https://developer.hirebalzac.ai
 metadata: {"clawdbot":{"emoji":"✍️","requires":{"bins":["balzac"],"env":["BALZAC_API_KEY"]}}}
 ---
@@ -21,7 +21,7 @@ official website: https://hirebalzac.ai
 | Property | Value |
 |----------|-------|
 | **name** | balzac |
-| **description** | AI content platform CLI for managing workspaces, keywords, suggestions, and articles |
+| **description** | AI content platform CLI for managing workspaces, keywords, suggestions, articles, and Google Search Console data |
 | **allowed-tools** | Bash(balzac:*) |
 
 ---
@@ -35,6 +35,7 @@ The fundamental pattern for using the Balzac CLI:
 3. **Manage keywords** — Add, enable/disable keywords
 4. **Generate content** — Generate suggestions, accept them, or create briefings directly
 5. **Manage articles** — List, export, rewrite, regenerate pictures, publish
+6. **Monitor performance** — View Google Search Console data (clicks, impressions, CTR, position)
 
 ```bash
 # 1. Authenticate
@@ -278,6 +279,37 @@ balzac integrations reconnect <id>
 balzac integrations delete <id>
 ```
 
+### Search Console (alias: `gsc`)
+
+Requires an active Google Search Console integration on the workspace (connected via the web app's OAuth flow). Data is synced daily from Google.
+
+```bash
+# Performance overview (30d default, with comparison to previous period)
+balzac search-console overview
+balzac gsc overview --start-date 2026-01-01 --end-date 2026-03-25
+
+# Top search queries — ranked by impressions
+balzac search-console queries
+balzac gsc queries --start-date 2026-03-01 --per-page 50
+
+# Top pages — ranked by clicks
+balzac search-console pages
+balzac gsc pages --page 2 --per-page 50
+
+# Daily time series (for trends / charts)
+balzac search-console daily
+balzac gsc daily --start-date 2026-02-01 --end-date 2026-03-25
+```
+
+All Search Console commands accept:
+- `-w, --workspace <id>` — Workspace ID (or set default)
+- `--start-date <YYYY-MM-DD>` — Start of period (default: 30 days before end date)
+- `--end-date <YYYY-MM-DD>` — End of period (default: today)
+
+The `queries` and `pages` commands also support `--page` and `--per-page` for pagination.
+
+Note: GSC data has a ~3-day delay from Google. The overview compares the selected period to the equivalent previous period and shows percentage changes. The queries endpoint only includes queries that Google discloses (anonymized low-volume queries are excluded by Google).
+
 ### Settings
 
 ```bash
@@ -431,7 +463,33 @@ balzac integrations create --service webhook --name "My App Webhook" \
 # Your endpoint should respond with 200 OK
 ```
 
-### Pattern 9: Error Handling and Retry
+### Pattern 9: Monitor Search Performance
+
+```bash
+#!/bin/bash
+# Check how your site is performing in Google Search
+balzac gsc overview
+
+# Find your best-performing queries
+balzac gsc queries --per-page 10
+
+# Find top pages and their clicks
+balzac gsc pages --per-page 10
+
+# Get daily data for a custom period (e.g. last quarter)
+balzac --json gsc daily --start-date 2026-01-01 --end-date 2026-03-25
+```
+
+### Pattern 10: Find Underperforming Queries to Optimize
+
+```bash
+#!/bin/bash
+# Find queries with high impressions but low CTR — optimization opportunities
+balzac --json gsc queries --per-page 100 | \
+  jq '[.queries[] | select(.impressions > 50 and .ctr < 2)] | sort_by(-.impressions) | .[:10]'
+```
+
+### Pattern 11: Error Handling and Retry
 
 ```bash
 #!/bin/bash
@@ -524,6 +582,10 @@ Several operations are asynchronous:
 8. **Suggestion vs briefing** — Suggestions are AI-generated proposals you accept/reject. Briefings are direct write instructions that start immediately
 9. **Article must be `done` for rewrite/publish** — Check status before calling rewrite, regenerate-picture, or publish
 10. **ISO 8601 dates** — Schedule dates must use format `"2026-04-01T10:00:00Z"`
+11. **Search Console requires web OAuth** — GSC integration is connected via the Balzac web app (OAuth with Google), not via the CLI. Once connected, data syncs daily and is available through `balzac gsc` commands
+12. **GSC data has ~3 day delay** — Google Search Console data is typically 2-3 days behind. The most recent days will show zero
+13. **GSC query data is privacy-filtered** — Google anonymizes low-volume queries. The sum of query-level data (`gsc queries`) will be lower than site-level totals (`gsc overview`). This is a Google limitation, not a bug
+14. **Search Console returns 412 if not connected** — All `gsc` commands require an active Google Search Console integration. If none is connected, the API returns `412 Precondition Failed`
 
 ---
 
@@ -568,6 +630,13 @@ balzac integrations get <id>                                # Details
 balzac integrations reconnect <id>                          # Re-test
 balzac integrations lookup webflow-sites --token "tok"      # Discover
 balzac integrations delete <id>                             # Delete
+
+# Search Console (alias: gsc)
+balzac gsc overview                                         # Performance overview
+balzac gsc queries                                          # Top search queries
+balzac gsc pages                                            # Top pages
+balzac gsc daily                                            # Daily time series
+balzac gsc overview --start-date 2026-01-01                 # Custom period
 
 # Shortcut
 balzac write "Topic" --wait                                 # Topic → article
