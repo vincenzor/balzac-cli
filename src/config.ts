@@ -45,8 +45,14 @@ export function getConfigPath(): string {
   return config.path;
 }
 
+let sessionWorkspace = '';
+
+export function setSessionWorkspace(id: string): void {
+  sessionWorkspace = id;
+}
+
 export function resolveWorkspace(cliFlag: string | undefined): string {
-  const ws = cliFlag || getDefaultWorkspace();
+  const ws = cliFlag || sessionWorkspace || getDefaultWorkspace();
   if (!ws) {
     throw new Error(
       'No workspace specified. Use --workspace <id> or set a default with: balzac config set workspace <id>'

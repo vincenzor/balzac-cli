@@ -1,6 +1,7 @@
 declare const PKG_VERSION: string;
 import { Command } from 'commander';
 import { setJsonMode, setQuietMode } from './output.js';
+import { setSessionWorkspace } from './config.js';
 import { registerAuthCommands } from './commands/auth.js';
 import { registerWorkspacesCommands } from './commands/workspaces.js';
 import { registerKeywordsCommands } from './commands/keywords.js';
@@ -23,10 +24,12 @@ program
   .version(PKG_VERSION)
   .option('--json', 'Output raw JSON')
   .option('-q, --quiet', 'Minimal output (IDs only)')
+  .option('-w, --workspace <id>', 'Workspace ID (applies to all subcommands)')
   .hook('preAction', (thisCommand) => {
     const opts = thisCommand.opts();
     if (opts.json) setJsonMode(true);
     if (opts.quiet) setQuietMode(true);
+    if (opts.workspace) setSessionWorkspace(opts.workspace);
   });
 
 registerAuthCommands(program);

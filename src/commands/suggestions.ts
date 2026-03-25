@@ -28,15 +28,17 @@ export function registerSuggestionsCommands(program: Command) {
   sg.command('list')
     .description('List suggestions')
     .option('-w, --workspace <id>', 'Workspace ID')
-    .option('--status <s>', 'Filter: proposed/accepted/rejected')
+    .option('--status <s>', 'Filter: proposed/accepted/rejected (default: proposed)')
+    .option('--all', 'Show all suggestions including rejected')
     .option('--page <n>', 'Page', '1')
     .option('--per-page <n>', 'Per page', '25')
     .action(async (opts) => {
       try {
         const ws = resolveWorkspace(opts.workspace);
+        const status = opts.all ? undefined : (opts.status || 'proposed');
         const { items, meta } = await client.paginate<Record<string, unknown>>(
           `/workspaces/${ws}/suggestions`, 'suggestions',
-          { status: opts.status, page: opts.page, per_page: opts.perPage }
+          { status, page: opts.page, per_page: opts.perPage }
         );
         printTable(items, [
           { key: 'id', label: 'ID' },
