@@ -79,6 +79,7 @@ export function registerBriefingsCommands(program: Command) {
     .option('--focus-keywords <kw>', 'Focus keywords')
     .option('--instructions <text>', 'Writing instructions')
     .option('--tone <id>', 'Tone of voice ID')
+    .option('--queue', 'Queue the article instead of writing immediately')
     .action(async (opts) => {
       try {
         const ws = resolveWorkspace(opts.workspace);
@@ -91,10 +92,15 @@ export function registerBriefingsCommands(program: Command) {
         if (opts.instructions) body.briefing = opts.instructions;
         if (opts.tone) body.tone_of_voice_id = opts.tone;
 
+        const payload: Record<string, unknown> = { briefing: body };
+        if (opts.queue) payload.start_writing = false;
+
         const res = await client.post<Record<string, unknown>>(
-          `/workspaces/${ws}/briefings`, { briefing: body }
+          `/workspaces/${ws}/briefings`, payload
         );
-        printSuccess('Briefing created — article writing started.');
+        printSuccess(opts.queue
+          ? 'Briefing created — article queued for later writing.'
+          : 'Briefing created — article writing started.');
         if (res.status !== 204 && res.data.briefing) {
           printRecord(res.data.briefing as Record<string, unknown>, FIELDS);
         }

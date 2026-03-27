@@ -157,6 +157,9 @@ balzac briefings list
 balzac briefings create --topic "How to use AI for content marketing"
 balzac briefings create --topic "SEO tips" --type listicle --length long
 
+# Create briefing — queue for later writing (respects articles-per-week schedule)
+balzac briefings create --topic "Content strategy guide" --queue
+
 # Get briefing details
 balzac briefings get <briefing-id>
 
@@ -579,7 +582,7 @@ Several operations are asynchronous:
 5. **Async operations need polling** — Suggestion generation and article writing are asynchronous. Poll the relevant list/get endpoint
 6. **JSON output for scripting** — Always use `--json` flag when piping to `jq` or other tools. Default output is human-formatted and not parseable
 7. **Rate limiting** — API allows 100 requests/minute. CLI auto-retries on 429 with exponential backoff. Add `sleep 1` between batch operations
-8. **Suggestion vs briefing** — Suggestions are AI-generated proposals you accept/reject. Briefings are direct write instructions that start immediately
+8. **Suggestion vs briefing** — Suggestions are AI-generated proposals you accept/reject. Briefings are direct write instructions that start immediately (unless `--queue` is used to defer writing to the workspace schedule)
 9. **Article must be `done` for rewrite/publish** — Check status before calling rewrite, regenerate-picture, or publish
 10. **ISO 8601 dates** — Schedule dates must use format `"2026-04-01T10:00:00Z"`
 11. **Search Console requires web OAuth** — GSC integration is connected via the Balzac web app (OAuth with Google), not via the CLI. Once connected, data syncs daily and is available through `balzac gsc` commands
@@ -614,6 +617,7 @@ balzac suggestions accept <id>                              # Accept (5 cr)
 
 # Briefings
 balzac briefings create --topic "Topic"                     # Write (5 cr)
+balzac briefings create --topic "Topic" --queue             # Queue (5 cr)
 
 # Articles
 balzac articles list --status done                          # Done articles
