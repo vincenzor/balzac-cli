@@ -30,7 +30,7 @@ This installs the [SKILL.md](SKILL.md) which gives your agent full knowledge of 
 
 ## Setup
 
-**Required:** Set your Balzac API key
+**Required:** Set your Balzac API key. You can get your API key by signing up at [https://hirebalzac.ai/start/](https://app.hirebalzac.ai/start/).
 
 ```bash
 # Interactive login (stores key locally)
